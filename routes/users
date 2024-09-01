@@ -1,27 +1,13 @@
 const userRouter = require("express").Router(); // creating a router
-const User = require("../models/users"); // import the data necessary for routing,
+const {
+  getUsers,
+  createUser,
+  getUser,
+} = require("../controllers/clothingitems");
 
-userRouter.get("/", (req, res) => {
-  const allUsers = User.find({});
-  res.send(allUsers);
-});
+userRouter.get("/", getUsers);
 
-userRouter.get("/:id", (req, res) => {
-  if (!User[req.params.id]) {
-    res.send({
-      message: "Requested resource not found",
-    });
-    return;
-  }
+userRouter.get("/:id", getUser);
 
-  const { name, avatar } = users[req.params.id];
-
-  res.send({ name, avatar });
-});
-
-userRouter.post("/", (req, res) => {
-  const { name, avatar } = req.body; // get the name and description of the user
-
-  User.create({ name, avatar });
-});
+userRouter.post("/", createUser);
 module.exports = userRouter;

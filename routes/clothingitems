@@ -1,17 +1,12 @@
 const itemRouter = require("express").Router(); // creating a router
-const Item = require("../models/clothingitems");
+const {
+  getItems,
+  createItem,
+  deleteItem,
+} = require("../controllers/clothingitems");
+itemRouter.get("/", getItems);
 
-itemRouter.get("/", (req, res) => {
-  const allItems = Item.find({});
-  res.send(allItems);
-});
+itemRouter.post("/", createItem);
 
-itemRouter.post("/", (req, res) => {
-  const { name, weather, imageUrl } = req.body;
-  Item.create({ name, weather, imageUrl });
-});
-
-itemRouter.delete("/:itemId", (req, res) => {
-  Item.findByIdAndRemove(req.params.itemId);
-});
+itemRouter.delete("/:itemId", deleteItem);
 module.exports = itemRouter;
