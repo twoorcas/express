@@ -6,14 +6,16 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "npx eslint .",
-    "nodemon": "npm run dev"
+    "start": "node app.js",
+    "dev": "nodemon app.js"
   },
   "keywords": [],
   "author": "Julie Chen",
   "license": "ISC",
   "dependencies": {
     "express": "^4.19.2",
-    "mongoose": "^6.6.1"
+    "mongoose": "^6.6.1",
+    "validator": "^13.12.0"
   },
   "devDependencies": {
     "eslint": "^8.57.0",
