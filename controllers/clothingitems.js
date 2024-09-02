@@ -1,4 +1,4 @@
-const Item = require("../models/clothingitems.js");
+const { Item } = require("../models/clothingitems.js");
 
 module.exports.getItems = (req, res) => {
   Item.find({})
@@ -21,20 +21,23 @@ module.exports.createItem = (req, res) => {
 };
 
 module.exports.deleteItem = (req, res) => {
-  Item.findByIdAndRemove(req.params.itemId)
+  Item.findByIdAndDelete(req.params.itemId)
     .orFail(() => {
       const error = new Error({
         message: "Requested resource not found",
       });
-      error.statusCode = 404;
       error.name = "NotFoundError";
       throw error;
     })
     .then((item) => res.send({ data: item }))
     .catch((err) => {
-      if (!err.name === "NotFoundError") {
+      console.error(err); // Log the error server-side
+
+      if (err.name === "NotFoundError") {
+        res.status(404).send({ message: err.message });
+      } else {
         res.status(500).send({
-          message: "error",
+          message: "An internal server error occurred",
         });
       }
     });
