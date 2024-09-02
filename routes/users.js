@@ -3,7 +3,7 @@ const {
   getUsers,
   createUser,
   getUser,
-} = require("../controllers/clothingitems");
+} = require("../controllers/clothingitems.js");
 
 userRouter.get("/", getUsers);
 

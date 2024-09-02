@@ -1,8 +1,12 @@
 const Item = require("../models/clothingitems");
 
 module.exports.getItems = (req, res) => {
-  const allItems = Item.find({});
-  res.send(allItems);
+  Item.find({})
+    .then((items) => res.send(items))
+    .catch((err) => {
+      console.log(err);
+      return res.status(500).send({ message: err.message });
+    });
 };
 
 module.exports.createItem = (req, res) => {

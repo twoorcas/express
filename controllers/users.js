@@ -1,7 +1,12 @@
 const User = require("../models/users");
 module.exports.getUsers = (req, res) => {
-  // const allUsers = User.find({});
-  // res.send(allUsers);
+  User.find({})
+    .then((users) => res.send(users))
+    .catch((err) => {
+      console.log(err);
+      return res.status(500).send({ message: err.message });
+    });
+
   console.log(111);
 };
 module.exports.getUser = (req, res) => {

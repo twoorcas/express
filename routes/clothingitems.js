@@ -3,7 +3,7 @@ const {
   getItems,
   createItem,
   deleteItem,
-} = require("../controllers/clothingitems");
+} = require("../controllers/clothingitems.js");
 itemRouter.get("/", getItems);
 
 itemRouter.post("/", createItem);
