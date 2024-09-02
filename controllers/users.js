@@ -1,13 +1,14 @@
-const User = require("../models/users");
+const User = require("../models/users.js");
 module.exports.getUsers = (req, res) => {
   User.find({})
-    .then((users) => res.send(users))
+    .then((users) =>
+      //  res.send(users)
+      console.log(111)
+    )
     .catch((err) => {
       console.log(err);
       return res.status(500).send({ message: err.message });
     });
-
-  console.log(111);
 };
 module.exports.getUser = (req, res) => {
   User.findById(req.params.id)
