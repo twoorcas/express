@@ -2,7 +2,7 @@ const { Item } = require("../models/clothingitems.js");
 
 module.exports.getItems = (req, res) => {
   Item.find({})
-    .then((items) => res.send(items))
+    .then((items) => res.status(200).send(items))
     .catch((err) => {
       console.log(err);
       return res.status(500).send({ message: err.message });
@@ -12,7 +12,7 @@ module.exports.getItems = (req, res) => {
 module.exports.createItem = (req, res) => {
   const { name, weather, imageUrl } = req.body;
   Item.create({ name, weather, imageUrl })
-    .then((item) => res.send({ data: item }))
+    .then((item) => res.status(200).send({ data: item }))
     .catch((err) =>
       res.status(500).send({
         message: "error",
@@ -29,15 +29,16 @@ module.exports.deleteItem = (req, res) => {
       error.name = "NotFoundError";
       throw error;
     })
-    .then((item) => res.send({ data: item }))
+    .then((item) => res.status(200).send({ data: item }))
     .catch((err) => {
       console.error(err); // Log the error server-side
-
+      console.log(err.name);
+      console.log(err.message);
       if (err.name === "NotFoundError") {
         res.status(404).send({ message: err.message });
       } else {
         res.status(500).send({
-          message: "An internal server error occurred",
+          message: err.message,
         });
       }
     });
