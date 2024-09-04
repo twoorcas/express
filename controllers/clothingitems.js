@@ -1,9 +1,10 @@
-const { Item } = require("../models/clothingitems.js");
+const { Item } = require("../models/clothingitems");
 const {
   invalidData,
   documentNotFound,
   defaultError,
-} = require("../utils/errors.js");
+} = require("../utils/errors");
+
 module.exports.getItems = (req, res) => {
   Item.find({})
     .then((items) => res.status(200).send(items))
@@ -44,11 +45,10 @@ module.exports.deleteItem = (req, res) => {
         return res
           .status(documentNotFound)
           .send({ message: "Requested resource not found" });
-      } else {
-        return res.status(defaultError).send({
-          message: err.message,
-        });
       }
+      return res.status(defaultError).send({
+        message: err.message,
+      });
     });
 };
 
@@ -71,11 +71,11 @@ module.exports.likeItem = (req, res) => {
         return res
           .status(documentNotFound)
           .send({ message: "Requested resource not found" });
-      } else {
-        return res.status(defaultError).send({
-          message: err.message,
-        });
       }
+
+      return res.status(defaultError).send({
+        message: err.message,
+      });
     });
 };
 module.exports.dislikeItem = (req, res) => {
@@ -97,10 +97,9 @@ module.exports.dislikeItem = (req, res) => {
         return res
           .status(documentNotFound)
           .send({ message: "Requested resource not found" });
-      } else {
-        return res.status(defaultError).send({
-          message: err.message,
-        });
       }
+      return res.status(defaultError).send({
+        message: err.message,
+      });
     });
 };

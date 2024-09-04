@@ -1,4 +1,4 @@
-const { User } = require("../models/users.js");
+const { User } = require("../models/users");
 const mongoose = require("mongoose");
 const {
   invalidData,
@@ -32,11 +32,10 @@ module.exports.getUser = (req, res) => {
         return res
           .status(documentNotFound)
           .send({ message: "Requested resource not found" });
-      } else {
-        return res.status(defaultError).send({
-          message: err.message,
-        });
       }
+      return res.status(defaultError).send({
+        message: err.message,
+      });
     });
 };
 
