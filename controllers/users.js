@@ -1,12 +1,17 @@
 const { User } = require("../models/users.js");
 const mongoose = require("mongoose");
+const {
+  invalidData,
+  documentNotFound,
+  defaultError,
+} = require("../utils/errors.js");
 
 module.exports.getUsers = (req, res) => {
   User.find({})
     .then((users) => res.status(200).send(users))
     .catch((err) => {
       console.log(err);
-      return res.status(500).send({ message: err.message });
+      return res.status(defaultError).send({ message: err.message });
     });
 };
 module.exports.getUser = (req, res) => {
@@ -21,14 +26,14 @@ module.exports.getUser = (req, res) => {
       console.log("Error name:", err.name);
       console.log("Error message:", err.message);
       if (err.name === "CastError") {
-        return res.status(400).send({ message: "Invalid ID format" });
+        return res.status(invalidData).send({ message: "Invalid ID format" });
       }
       if (err.name === "DocumentNotFoundError") {
         return res
-          .status(404)
+          .status(documentNotFound)
           .send({ message: "Requested resource not found" });
       } else {
-        return res.status(500).send({
+        return res.status(defaultError).send({
           message: err.message,
         });
       }
@@ -44,8 +49,8 @@ module.exports.createUser = (req, res) => {
       console.log(err.name);
       console.log(err.message);
       if (err.name === "ValidationError") {
-        return res.status(400).send({ message: err.message });
+        return res.status(invalidData).send({ message: err.message });
       }
-      return res.status(500).send({ message: err.message });
+      return res.status(defaultError).send({ message: err.message });
     });
 };
