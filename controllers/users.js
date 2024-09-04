@@ -1,10 +1,10 @@
 const { User } = require("../models/users");
-const mongoose = require("mongoose");
+
 const {
   invalidData,
   documentNotFound,
   defaultError,
-} = require("../utils/errors.js");
+} = require("../utils/errors");
 
 module.exports.getUsers = (req, res) => {
   User.find({})
@@ -17,7 +17,7 @@ module.exports.getUsers = (req, res) => {
 module.exports.getUser = (req, res) => {
   const { id } = req.params;
   User.findById(id)
-    //throw error if id format valid but id not found
+    // throw error if id format valid but id not found
     .orFail()
     // return the found data to the user
     .then((user) => res.status(200).send(user))
