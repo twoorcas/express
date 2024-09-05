@@ -9,8 +9,10 @@ module.exports.getItems = (req, res) => {
   Item.find({})
     .then((items) => res.status(200).send(items))
     .catch((err) => {
-      console.log(err);
-      return res.status(defaultError).send({ message: err.message });
+      console.error(err);
+      return res
+        .status(defaultError)
+        .send({ message: "An error has occurred on the server" });
     });
 };
 
@@ -21,12 +23,10 @@ module.exports.createItem = (req, res) => {
     .then((item) => res.status(201).send(item))
     .catch((err) => {
       console.error(err); // Log the error server-side
-      console.log(err.name);
-      console.log(err.message);
       if (err.name === "ValidationError") {
-        return res.status(invalidData).send({ message: err.message });
+        return res.status(invalidData).send({ message: "Invalid data" });
       }
-      return res.status(defaultError).send({ message: err.message });
+      return res.status(defaultError).send({ message: "Internal Server" });
     });
 };
 
@@ -36,10 +36,8 @@ module.exports.deleteItem = (req, res) => {
     .then((item) => res.status(200).send(item))
     .catch((err) => {
       console.error(err); // Log the error server-side
-      console.log("Error name:", err.name);
-      console.log("Error message:", err.message);
       if (err.name === "CastError") {
-        return res.status(invalidData).send({ message: "Invalid ID format" });
+        return res.status(invalidData).send({ message: "Invalid id format" });
       }
       if (err.name === "DocumentNotFoundError") {
         return res
@@ -47,7 +45,7 @@ module.exports.deleteItem = (req, res) => {
           .send({ message: "Requested resource not found" });
       }
       return res.status(defaultError).send({
-        message: err.message,
+        message: "An error has occurred on the server",
       });
     });
 };
@@ -62,10 +60,8 @@ module.exports.likeItem = (req, res) => {
     .then((item) => res.status(201).send(item))
     .catch((err) => {
       console.error(err);
-      console.log("Error name:", err.name);
-      console.log("Error message:", err.message);
       if (err.name === "CastError") {
-        return res.status(invalidData).send({ message: "Invalid ID format" });
+        return res.status(invalidData).send({ message: "Invalid id format" });
       }
       if (err.name === "DocumentNotFoundError") {
         return res
@@ -88,10 +84,8 @@ module.exports.dislikeItem = (req, res) => {
     .then((item) => res.status(200).send(item))
     .catch((err) => {
       console.error(err);
-      console.log("Error name:", err.name);
-      console.log("Error message:", err.message);
       if (err.name === "CastError") {
-        return res.status(invalidData).send({ message: "Invalid ID format" });
+        return res.status(invalidData).send({ message: "Invalid id format" });
       }
       if (err.name === "DocumentNotFoundError") {
         return res
@@ -99,7 +93,7 @@ module.exports.dislikeItem = (req, res) => {
           .send({ message: "Requested resource not found" });
       }
       return res.status(defaultError).send({
-        message: err.message,
+        message: "An error has occurred on the server",
       });
     });
 };

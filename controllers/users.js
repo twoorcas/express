@@ -11,7 +11,9 @@ module.exports.getUsers = (req, res) => {
     .then((users) => res.status(200).send(users))
     .catch((err) => {
       console.log(err);
-      return res.status(defaultError).send({ message: err.message });
+      return res
+        .status(defaultError)
+        .send({ message: "An error has occurred on the server" });
     });
 };
 module.exports.getUser = (req, res) => {
@@ -23,10 +25,8 @@ module.exports.getUser = (req, res) => {
     .then((user) => res.status(200).send(user))
     .catch((err) => {
       console.error(err); // Log the error server-side
-      console.log("Error name:", err.name);
-      console.log("Error message:", err.message);
       if (err.name === "CastError") {
-        return res.status(invalidData).send({ message: "Invalid ID format" });
+        return res.status(invalidData).send({ message: "Invalid id format" });
       }
       if (err.name === "DocumentNotFoundError") {
         return res
@@ -34,7 +34,7 @@ module.exports.getUser = (req, res) => {
           .send({ message: "Requested resource not found" });
       }
       return res.status(defaultError).send({
-        message: err.message,
+        message: "An error has occurred on the server",
       });
     });
 };
@@ -45,11 +45,11 @@ module.exports.createUser = (req, res) => {
     .then((user) => res.status(201).send({ data: user }))
     .catch((err) => {
       console.error(err); // Log the error server-side
-      console.log(err.name);
-      console.log(err.message);
       if (err.name === "ValidationError") {
-        return res.status(invalidData).send({ message: err.message });
+        return res.status(invalidData).send({ message: "Invalid data" });
       }
-      return res.status(defaultError).send({ message: err.message });
+      return res
+        .status(defaultError)
+        .send({ message: "An error has occurred on the server" });
     });
 };
