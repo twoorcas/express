@@ -4,6 +4,8 @@ const {
   invalidData,
   documentNotFound,
   defaultError,
+  duplicateData,
+  unauthorizedError,
 } = require("../utils/errors");
 
 module.exports.getUsers = (req, res) => {
@@ -41,6 +43,17 @@ module.exports.getUser = (req, res) => {
 
 module.exports.createUser = (req, res) => {
   const { name, avatar, email, password } = req.body; // get the name and description of the user
+  User.findOne({ email })
+    .then((user) => {
+      if (user) {
+        throw new Error("email exists");
+      }
+    })
+    .catch((err) => {
+      console.error(err);
+      err.name = 409;
+      throw new Error("409");
+    });
   bcrypt
     .hash(password, 10)
     .then(User.create({ name, avatar, email, password }))
@@ -49,6 +62,28 @@ module.exports.createUser = (req, res) => {
       console.error(err); // Log the error server-side
       if (err.name === "ValidationError") {
         return res.status(invalidData).send({ message: "Invalid data" });
+      }
+      if (err.code === 11000) {
+        res.status(duplicateData).send({ message: "User already exist" });
+      }
+      return res
+        .status(defaultError)
+        .send({ message: "An error has occurred on the server" });
+    });
+};
+
+module.exports.login = (req, res) => {
+  const { email, password } = req.body;
+  User.findUserByCredentials(email, password)
+    .then((user) => {
+      res.send({ message: "Login successful" });
+    })
+    .catch((err) => {
+      console.error(err);
+      if (err.name === "AuthError") {
+        return res
+          .status(unauthorizedError)
+          .send({ message: "Incorrect email or password" });
       }
       return res
         .status(defaultError)
