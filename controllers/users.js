@@ -1,5 +1,5 @@
 const { User } = require("../models/users");
-
+const bcrypt = require("bcryptjs"); // importing bcrypt
 const {
   invalidData,
   documentNotFound,
@@ -40,8 +40,10 @@ module.exports.getUser = (req, res) => {
 };
 
 module.exports.createUser = (req, res) => {
-  const { name, avatar } = req.body; // get the name and description of the user
-  User.create({ name, avatar })
+  const { name, avatar, email, password } = req.body; // get the name and description of the user
+  bcrypt
+    .hash(password, 10)
+    .then(User.create({ name, avatar, email, password }))
     .then((user) => res.status(201).send({ data: user }))
     .catch((err) => {
       console.error(err); // Log the error server-side
