@@ -6,6 +6,7 @@ const {
   defaultError,
   duplicateData,
   unauthorizedError,
+  DuplicateError,
 } = require("../utils/errors");
 
 module.exports.getUsers = (req, res) => {
@@ -46,29 +47,40 @@ module.exports.createUser = (req, res) => {
   User.findOne({ email })
     .then((user) => {
       if (user) {
-        throw new Error("email exists");
+        // If user exists, return 409 Conflict
+        // return res
+        //   .status(duplicateData)
+        //   .send({ message: "User with this email already exists!" });
+        throw new DuplicateError("duplicate emails");
       }
+      // If user doesn't exist, hash the password and create the user
+      bcrypt
+        .hash(password, 10)
+        .then(User.create({ name, avatar, email, password }))
+        .then((user) => res.status(201).send({ data: user }))
+        .catch((err) => {
+          console.error(err); // Log the error server-side
+          if (err.name === "ValidationError") {
+            return res.status(invalidData).send({ message: "Invalid data" });
+          }
+          // if (err.name === "DuplicateError") {
+          //   console.log("err is duplicate email");
+          //   return res
+          //     .status(duplicateData)
+          //     .send({ message: "User already exists" });
+          // }
+          return res
+            .status(defaultError)
+            .send({ message: "An error has occurred on the server" });
+        });
     })
     .catch((err) => {
       console.error(err);
-      err.name = 409;
-      throw new Error("409");
-    });
-  bcrypt
-    .hash(password, 10)
-    .then(User.create({ name, avatar, email, password }))
-    .then((user) => res.status(201).send({ data: user }))
-    .catch((err) => {
-      console.error(err); // Log the error server-side
-      if (err.name === "ValidationError") {
-        return res.status(invalidData).send({ message: "Invalid data" });
+      if (err.name === "DuplicateError") {
+        return res
+          .status(duplicateData)
+          .send({ message: "User already exists" });
       }
-      if (err.code === 11000) {
-        res.status(duplicateData).send({ message: "User already exist" });
-      }
-      return res
-        .status(defaultError)
-        .send({ message: "An error has occurred on the server" });
     });
 };
 

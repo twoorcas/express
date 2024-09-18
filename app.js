@@ -1,7 +1,6 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const indexRouter = require("./routes/index");
-const { User } = require("./models/users");
 const app = express();
 const { PORT = 3001 } = process.env;
 mongoose
@@ -9,19 +8,8 @@ mongoose
     useNewUrlParser: true,
     useUnifiedTopology: true,
   })
-  .then(() => {
-    console.log("MongoDB connected");
-    User.init()
-      .then(() => {
-        console.log("Indexes are ensured");
-      })
-      .catch((err) => {
-        console.error("Error ensuring indexes:", err);
-      });
-  })
-  .catch((err) => {
-    console.error("Error connecting to MongoDB:", err);
-  })
+  .then(() => console.log("MongoDB connected"))
+
   .catch((err) => console.error("Failed to connect to MongoDB", err));
 const auth = (req, res, next) => {
   req.user = {
