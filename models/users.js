@@ -41,19 +41,33 @@ const userSchema = new Schema(
   {
     statics: {
       findUserByCredentials(email, password) {
-        return this.findOne({ email }).then((user) => {
-          if (!user) {
-            return Promise.reject(new AuthError("Incorrect email or password"));
-          }
-          bcrypt.compare(password, user.password).then((matched) => {
-            if (!matched) {
+        return this.findOne({ email })
+          .select("+password")
+          .then((user) => {
+            if (!user) {
               return Promise.reject(
                 new AuthError("Incorrect email or password")
               );
             }
-            return user;
+            return bcrypt
+              .compare(password, user.password)
+              .then((matched) => {
+                if (!matched) {
+                  return Promise.reject(
+                    new AuthError("Incorrect email or password")
+                  );
+                }
+                return user;
+              })
+              .catch((err) => {
+                console.error(err);
+                throw err;
+              });
+          })
+          .catch((err) => {
+            console.error(err);
+            throw err;
           });
-        });
       },
     },
   }

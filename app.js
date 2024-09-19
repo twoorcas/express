@@ -13,7 +13,6 @@ mongoose
 
   .catch((err) => console.error("Failed to connect to MongoDB", err));
 
-app.use(auth);
 // Middleware to parse JSON bodies
 app.use(express.json());
 app.use("/", indexRouter);

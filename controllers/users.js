@@ -86,7 +86,6 @@ module.exports.createUser = (req, res) => {
 module.exports.login = (req, res) => {
   const { email, password } = req.body;
   User.findUserByCredentials(email, password)
-    .select("+password") //// the password hash will in the user object
     .then((user) => {
       const token = jwt.sign(
         { _id: user._id },

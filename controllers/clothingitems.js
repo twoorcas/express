@@ -37,10 +37,11 @@ module.exports.deleteItem = (req, res) => {
   Item.findById(req.params.itemId)
     .then((item) => {
       if (item.owner._id === user) {
-        Item.findByIdAndDelete(req.params.itemId)
+        return Item.findByIdAndDelete(req.params.itemId)
           .orFail()
           .then((item) => res.status(200).send(item));
-      } else throw new ForbiddenError("Request forbidden");
+      }
+      throw new ForbiddenError("Request forbidden");
     })
     .catch((err) => {
       console.error(err);
