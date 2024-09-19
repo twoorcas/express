@@ -8,8 +8,8 @@ const userSchema = new Schema(
     name: {
       type: String,
       required: true,
-      minlength: 2,
-      maxlength: 30,
+      minlength: [2, "Name must be at least 2 characters long"],
+      maxlength: [30, "Name exceeds 30 characters"],
     },
     avatar: {
       type: String,
@@ -49,10 +49,14 @@ const userSchema = new Schema(
                 new AuthError("Incorrect email or password")
               );
             }
+
+            console.log("Plain password:", password);
+            console.log("Stored hashed password:", user.password);
             return bcrypt
               .compare(password, user.password)
               .then((matched) => {
                 if (!matched) {
+                  console.log("Password match failed:", matched);
                   return Promise.reject(
                     new AuthError("Incorrect email or password")
                   );

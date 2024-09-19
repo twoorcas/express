@@ -11,7 +11,7 @@ const {
   AuthError,
   NotFoundError,
 } = require("../utils/errors");
-const JWT_SECRET = require("../utils/config");
+const { JWT_SECRET } = require("../utils/config");
 module.exports.getUsers = (req, res) => {
   User.find({})
     .then((users) => res.status(200).send(users))
@@ -55,19 +55,15 @@ module.exports.createUser = (req, res) => {
       // If user doesn't exist, hash the password and create the user
       bcrypt
         .hash(password, 10)
-        .then(User.create({ name, avatar, email, password }))
-        .then((user) => res.status(201).send({ data: user }))
+        .then((hashedPassword) =>
+          User.create({ name, avatar, email, password: hashedPassword })
+        )
+        .then((user) => res.status(201).send({ message: "User Created " }))
         .catch((err) => {
           console.error(err); // Log the error server-side
           if (err.name === "ValidationError") {
             return res.status(invalidData).send({ message: "Invalid data" });
           }
-          // if (err.name === "DuplicateError") {
-          //   console.log("err is duplicate email");
-          //   return res
-          //     .status(duplicateData)
-          //     .send({ message: "User already exists" });
-          // }
           return res
             .status(defaultError)
             .send({ message: "An error has occurred on the server" });
@@ -80,6 +76,9 @@ module.exports.createUser = (req, res) => {
           .status(duplicateData)
           .send({ message: "User already exists" });
       }
+      return res
+        .status(defaultError)
+        .send({ message: "An error has occurred on the server" });
     });
 };
 
