@@ -1,5 +1,6 @@
 const { User } = require("../models/users");
 const bcrypt = require("bcryptjs"); // importing bcrypt
+const jwt = require("jsonwebtoken");
 const {
   invalidData,
   documentNotFound,
@@ -7,8 +8,10 @@ const {
   duplicateData,
   unauthorizedError,
   DuplicateError,
+  AuthError,
+  NotFoundError,
 } = require("../utils/errors");
-
+const JWT_SECRET = require("../utils/config");
 module.exports.getUsers = (req, res) => {
   User.find({})
     .then((users) => res.status(200).send(users))
@@ -88,7 +91,12 @@ module.exports.login = (req, res) => {
   const { email, password } = req.body;
   User.findUserByCredentials(email, password)
     .then((user) => {
-      res.send({ message: "Login successful" });
+      const token = jwt.sign(
+        { _id: user._id },
+        JWT_SECRET,
+        { expiresIn: "7d" } // this token will expire in 7d
+      );
+      res.send({ token: token });
     })
     .catch((err) => {
       console.error(err);
@@ -101,4 +109,32 @@ module.exports.login = (req, res) => {
         .status(defaultError)
         .send({ message: "An error has occurred on the server" });
     });
+};
+
+module.exports.getCurrentUser = (req, res) => {
+  const id = req.user._id;
+  findById(id)
+    .then((user) => {
+      if (user) {
+        return res.send({ message: user });
+      }
+      return Promise.reject(new AuthError("Unauthorized request"));
+    })
+    .catch((err) => {
+      if (err.name === "AuthError") {
+        return res
+          .status(unauthorizedError)
+          .send({ message: "Unauthorized request" });
+      }
+      return res
+        .status(defaultError)
+        .send({ message: "An error has occurred on the server" });
+    });
+};
+
+module.exports.updateProfile = (req, res) => {
+  const id = req.user._id;
+  const update = req.body;
+  // findByIdAndUpdate(id, update, { runValidators: true }).then();
+  return res.send({ message: "test" });
 };

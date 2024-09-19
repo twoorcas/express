@@ -15,5 +15,12 @@ class DuplicateError extends Error {
     this.name = "DuplicateError";
   }
 }
+class NotFoundError extends Error {
+  constructor(message) {
+    super(message);
+    this.name = "NotFoundError";
+  }
+}
 module.exports.AuthError = AuthError;
 module.exports.DuplicateError = DuplicateError;
+module.exports.NotFoundError = NotFoundError;
