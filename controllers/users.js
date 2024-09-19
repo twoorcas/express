@@ -50,10 +50,6 @@ module.exports.createUser = (req, res) => {
   User.findOne({ email })
     .then((user) => {
       if (user) {
-        // If user exists, return 409 Conflict
-        // return res
-        //   .status(duplicateData)
-        //   .send({ message: "User with this email already exists!" });
         throw new DuplicateError("duplicate emails");
       }
       // If user doesn't exist, hash the password and create the user
@@ -90,6 +86,7 @@ module.exports.createUser = (req, res) => {
 module.exports.login = (req, res) => {
   const { email, password } = req.body;
   User.findUserByCredentials(email, password)
+    .select("+password") //// the password hash will in the user object
     .then((user) => {
       const token = jwt.sign(
         { _id: user._id },
@@ -113,7 +110,7 @@ module.exports.login = (req, res) => {
 
 module.exports.getCurrentUser = (req, res) => {
   const id = req.user._id;
-  findById(id)
+  User.findById(id)
     .then((user) => {
       if (user) {
         return res.send({ message: user });
@@ -121,6 +118,7 @@ module.exports.getCurrentUser = (req, res) => {
       return Promise.reject(new AuthError("Unauthorized request"));
     })
     .catch((err) => {
+      console.error(err);
       if (err.name === "AuthError") {
         return res
           .status(unauthorizedError)
@@ -134,7 +132,29 @@ module.exports.getCurrentUser = (req, res) => {
 
 module.exports.updateProfile = (req, res) => {
   const id = req.user._id;
-  const update = req.body;
-  // findByIdAndUpdate(id, update, { runValidators: true }).then();
-  return res.send({ message: "test" });
+  const name = req.body.name;
+  const avatar = req.body.avatar;
+  User.findByIdAndUpdate(
+    id,
+    { name: name, avatar: avatar },
+    { runValidators: true, new: true }
+  )
+    .then((user) => {
+      if (user) {
+        return res.send({ message: "Profile has been updated" });
+      }
+      throw new NotFoundError("Not found");
+    })
+    .catch((err) => {
+      console.error(err);
+      if (err.name === "NotFoundError") {
+        return res.status(documentNotFound).send({ message: "User not found" });
+      }
+      if (err.name === "ValidationError") {
+        return res.status(invalidData).send({ message: "Invalid data" });
+      }
+      return res
+        .status(defaultError)
+        .send({ message: "An error has occurred on the server" });
+    });
 };

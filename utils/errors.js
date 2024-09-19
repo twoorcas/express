@@ -3,6 +3,7 @@ module.exports.documentNotFound = 404;
 module.exports.defaultError = 500;
 module.exports.duplicateData = 409;
 module.exports.unauthorizedError = 401;
+module.exports.forbiddenError = 403;
 class AuthError extends Error {
   constructor(message) {
     super(message);
@@ -21,6 +22,14 @@ class NotFoundError extends Error {
     this.name = "NotFoundError";
   }
 }
+
+class ForbiddenError extends Error {
+  constructor(message) {
+    super(message);
+    this.name = "ForbiddenError";
+  }
+}
 module.exports.AuthError = AuthError;
 module.exports.DuplicateError = DuplicateError;
 module.exports.NotFoundError = NotFoundError;
+module.exports.ForbiddenError = ForbiddenError;

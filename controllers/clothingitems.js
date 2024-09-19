@@ -3,6 +3,8 @@ const {
   invalidData,
   documentNotFound,
   defaultError,
+  forbiddenError,
+  ForbiddenError,
 } = require("../utils/errors");
 
 module.exports.getItems = (req, res) => {
@@ -31,11 +33,22 @@ module.exports.createItem = (req, res) => {
 };
 
 module.exports.deleteItem = (req, res) => {
-  Item.findByIdAndDelete(req.params.itemId)
-    .orFail()
-    .then((item) => res.status(200).send(item))
+  const user = req.user._id;
+  Item.findById(req.params.itemId)
+    .then((item) => {
+      if (item.owner._id === user) {
+        Item.findByIdAndDelete(req.params.itemId)
+          .orFail()
+          .then((item) => res.status(200).send(item));
+      } else throw new ForbiddenError("Request forbidden");
+    })
     .catch((err) => {
-      console.error(err); // Log the error server-side
+      console.error(err);
+      if (err.name === "ForbiddenError") {
+        return res
+          .status(forbiddenError)
+          .send({ message: "Item cannot be deleted" });
+      }
       if (err.name === "CastError") {
         return res.status(invalidData).send({ message: "Invalid id format" });
       }
