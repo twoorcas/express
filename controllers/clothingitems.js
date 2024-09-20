@@ -37,7 +37,7 @@ module.exports.deleteItem = (req, res) => {
   Item.findById(req.params.itemId)
     .populate("owner")
     .then((item) => {
-      if (item.owner._id === user) {
+      if (item.owner._id.equals(user)) {
         return Item.findByIdAndDelete(item._id)
           .orFail()
           .then((item) => res.status(200).send(item));
