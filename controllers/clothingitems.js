@@ -35,12 +35,15 @@ module.exports.createItem = (req, res) => {
 module.exports.deleteItem = (req, res) => {
   const user = req.user._id;
   Item.findById(req.params.itemId)
+    .populate("owner")
     .then((item) => {
       if (item.owner._id === user) {
-        return Item.findByIdAndDelete(req.params.itemId)
+        return Item.findByIdAndDelete(item._id)
           .orFail()
           .then((item) => res.status(200).send(item));
       }
+      console.log(item.owner);
+      console.log(user);
       throw new ForbiddenError("Request forbidden");
     })
     .catch((err) => {

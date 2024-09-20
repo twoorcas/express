@@ -10,6 +10,7 @@ const {
   DuplicateError,
   AuthError,
   NotFoundError,
+  ValidationError,
 } = require("../utils/errors");
 const { JWT_SECRET } = require("../utils/config");
 module.exports.getUsers = (req, res) => {
@@ -58,7 +59,11 @@ module.exports.createUser = (req, res) => {
         .then((hashedPassword) =>
           User.create({ name, avatar, email, password: hashedPassword })
         )
-        .then((user) => res.status(201).send({ message: "User Created " }))
+        .then((user) =>
+          res
+            .status(201)
+            .send({ name: user.name, avatar: user.avatar, email: user.email })
+        )
         .catch((err) => {
           console.error(err); // Log the error server-side
           if (err.name === "ValidationError") {
@@ -83,8 +88,7 @@ module.exports.createUser = (req, res) => {
 };
 
 module.exports.login = (req, res) => {
-  const { email, password } = req.body;
-  User.findUserByCredentials(email, password)
+  User.findUserByCredentials(req.body.email, req.body.password)
     .then((user) => {
       const token = jwt.sign(
         { _id: user._id },
@@ -95,6 +99,11 @@ module.exports.login = (req, res) => {
     })
     .catch((err) => {
       console.error(err);
+      if (err.name === "ValidationError") {
+        return res
+          .status(invalidData)
+          .send({ message: "Email or password missing" });
+      }
       if (err.name === "AuthError") {
         return res
           .status(unauthorizedError)
@@ -139,7 +148,7 @@ module.exports.updateProfile = (req, res) => {
   )
     .then((user) => {
       if (user) {
-        return res.send({ message: "Profile has been updated" });
+        return res.send({ data: user });
       }
       throw new NotFoundError("Not found");
     })

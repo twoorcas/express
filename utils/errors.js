@@ -29,7 +29,14 @@ class ForbiddenError extends Error {
     this.name = "ForbiddenError";
   }
 }
+class ValidationError extends Error {
+  constructor(message) {
+    super(message);
+    this.name = "ValidationError";
+  }
+}
 module.exports.AuthError = AuthError;
 module.exports.DuplicateError = DuplicateError;
 module.exports.NotFoundError = NotFoundError;
 module.exports.ForbiddenError = ForbiddenError;
+module.exports.ValidationError = ValidationError;
