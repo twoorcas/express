@@ -140,10 +140,12 @@ module.exports.getCurrentUser = (req, res) => {
 };
 
 module.exports.updateProfile = (req, res) => {
-  const { _id, name, avatar } = req.body;
+  const { _id } = req.user;
+  const { name, avatar } = req.body;
+
   User.findByIdAndUpdate(
     _id,
-    { name, avatar },
+    { name: name, avatar: avatar },
     { runValidators: true, new: true }
   )
     .then((user) => {
