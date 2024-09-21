@@ -41,7 +41,7 @@ module.exports.deleteItem = (req, res) => {
       if (item.owner._id.equals(user)) {
         return Item.findByIdAndDelete(item._id)
           .orFail()
-          .then((item) => res.status(200).send(item));
+          .then((deleted) => res.status(200).send({ deleted: deleted }));
       }
 
       throw new ForbiddenError("Request forbidden");

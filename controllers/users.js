@@ -1,6 +1,7 @@
-const { User } = require("../models/users");
 const bcrypt = require("bcryptjs"); // importing bcrypt
 const jwt = require("jsonwebtoken");
+const { JWT_SECRET } = require("../utils/config");
+const { User } = require("../models/users");
 const {
   invalidData,
   documentNotFound,
@@ -10,9 +11,8 @@ const {
   DuplicateError,
   AuthError,
   NotFoundError,
-  ValidationError,
 } = require("../utils/errors");
-const { JWT_SECRET } = require("../utils/config");
+
 module.exports.getUsers = (req, res) => {
   User.find({})
     .then((users) => res.status(200).send(users))
@@ -95,7 +95,7 @@ module.exports.login = (req, res) => {
         JWT_SECRET,
         { expiresIn: "7d" } // this token will expire in 7d
       );
-      res.send({ token: token });
+      res.status(200).send({ token: token });
     })
     .catch((err) => {
       console.error(err);
@@ -138,11 +138,9 @@ module.exports.getCurrentUser = (req, res) => {
 };
 
 module.exports.updateProfile = (req, res) => {
-  const id = req.user._id;
-  const name = req.body.name;
-  const avatar = req.body.avatar;
+  const { _id, name, avatar } = req.body;
   User.findByIdAndUpdate(
-    id,
+    _id,
     { name: name, avatar: avatar },
     { runValidators: true, new: true }
   )
