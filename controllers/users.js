@@ -15,7 +15,7 @@ const { NotFoundError } = require("../utils/errorclass/NotFoundError");
 
 module.exports.getUsers = (req, res) => {
   User.find({})
-    .then((users) => res.status(200).send(users))
+    .then((users) => res.send(users))
     .catch((err) => {
       console.log(err);
       return res
@@ -29,7 +29,7 @@ module.exports.getUser = (req, res) => {
     // throw error if id format valid but id not found
     .orFail()
     // return the found data to the user
-    .then((user) => res.status(200).send(user))
+    .then((user) => res.send(user))
     .catch((err) => {
       console.error(err); // Log the error server-side
       if (err.name === "CastError") {
@@ -124,14 +124,14 @@ module.exports.getCurrentUser = (req, res) => {
       if (user) {
         return res.send({ message: user });
       }
-      return Promise.reject(new AuthError("Unauthorized request"));
+      return Promise.reject(new NotFoundError("User Not Found"));
     })
     .catch((err) => {
       console.error(err);
-      if (err.name === "AuthError") {
+      if (err.name === "NotFoundError") {
         return res
-          .status(unauthorizedError)
-          .send({ message: "Unauthorized request" });
+          .status(documentNotFound)
+          .send({ message: "User does not exist" });
       }
       return res
         .status(defaultError)

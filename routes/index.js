@@ -9,7 +9,7 @@ indexRouter.use("/items", itemRouter);
 indexRouter.post("/signin", login);
 indexRouter.post("/signup", createUser);
 indexRouter.use((req, res) => {
-  res.status(documentNotFound).send({ error: "Not Found" });
+  return res.status(documentNotFound).send({ message: "Source Not Found" });
 }); // no need for next(), since the middleware direcrtly sends a res and no pass control to further middleware.
 
 module.exports = indexRouter;

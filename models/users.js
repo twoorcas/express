@@ -57,25 +57,19 @@ const userSchema = new Schema(
               );
             }
 
-            return bcrypt
-              .compare(password, user.password)
-              .then((matched) => {
-                if (!matched) {
-                  return Promise.reject(
-                    new AuthError("Incorrect email or password")
-                  );
-                }
-                return user;
-              })
-              .catch((err) => {
-                console.error(err);
-                throw err;
-              });
-          })
-          .catch((err) => {
-            console.error(err);
-            throw err;
+            return bcrypt.compare(password, user.password).then((matched) => {
+              if (!matched) {
+                return Promise.reject(
+                  new AuthError("Incorrect email or password")
+                );
+              }
+              return user;
+            });
           });
+        // .catch((err) => {
+        //   console.error(err);
+        //   throw err;
+        // });
       },
     },
   }
