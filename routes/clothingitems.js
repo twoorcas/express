@@ -7,6 +7,7 @@ const {
   likeItem,
 } = require("../controllers/clothingitems");
 const { auth } = require("../middlewares/auth");
+
 itemRouter.get("/", getItems);
 itemRouter.post("/", auth, createItem);
 itemRouter.delete("/:itemId", auth, deleteItem);

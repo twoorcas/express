@@ -59,10 +59,14 @@ module.exports.createUser = (req, res) => {
         .then((hashedPassword) =>
           User.create({ name, avatar, email, password: hashedPassword })
         )
-        .then((user) =>
+        .then((created) =>
           res
             .status(201)
-            .send({ name: user.name, avatar: user.avatar, email: user.email })
+            .send({
+              name: created.name,
+              avatar: created.avatar,
+              email: created.email,
+            })
         )
         .catch((err) => {
           console.error(err); // Log the error server-side
@@ -95,7 +99,7 @@ module.exports.login = (req, res) => {
         JWT_SECRET,
         { expiresIn: "7d" } // this token will expire in 7d
       );
-      res.status(200).send({ token: token });
+      return res.send({ token });
     })
     .catch((err) => {
       console.error(err);
@@ -141,7 +145,7 @@ module.exports.updateProfile = (req, res) => {
   const { _id, name, avatar } = req.body;
   User.findByIdAndUpdate(
     _id,
-    { name: name, avatar: avatar },
+    { name, avatar },
     { runValidators: true, new: true }
   )
     .then((user) => {
