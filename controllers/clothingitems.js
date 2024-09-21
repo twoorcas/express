@@ -36,14 +36,14 @@ module.exports.deleteItem = (req, res) => {
   const user = req.user._id;
   Item.findById(req.params.itemId)
     .populate("owner")
+    .orFail() // ensures if no such _id in the db, it throws 404
     .then((item) => {
       if (item.owner._id.equals(user)) {
         return Item.findByIdAndDelete(item._id)
           .orFail()
           .then((item) => res.status(200).send(item));
       }
-      console.log(item.owner);
-      console.log(user);
+
       throw new ForbiddenError("Request forbidden");
     })
     .catch((err) => {
