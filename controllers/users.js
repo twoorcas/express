@@ -145,7 +145,7 @@ module.exports.updateProfile = (req, res) => {
 
   User.findByIdAndUpdate(
     _id,
-    { name: name, avatar: avatar },
+    { name, avatar },
     { runValidators: true, new: true }
   )
     .then((user) => {
