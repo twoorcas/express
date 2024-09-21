@@ -9,7 +9,6 @@ const {
   duplicateData,
   unauthorizedError,
 } = require("../utils/errors");
-const { AuthError } = require("../utils/errorclass/AuthError");
 const { DuplicateError } = require("../utils/errorclass/DuplicateError");
 const { NotFoundError } = require("../utils/errorclass/NotFoundError");
 
