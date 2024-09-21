@@ -4,8 +4,8 @@ const {
   documentNotFound,
   defaultError,
   forbiddenError,
-  ForbiddenError,
 } = require("../utils/errors");
+const { ForbiddenError } = require("../utils/errorclass/ForbiddenError");
 
 module.exports.getItems = (req, res) => {
   Item.find({})

@@ -8,10 +8,10 @@ const {
   defaultError,
   duplicateData,
   unauthorizedError,
-  DuplicateError,
-  AuthError,
-  NotFoundError,
 } = require("../utils/errors");
+const { AuthError } = require("../utils/errorclass/AuthError");
+const { DuplicateError } = require("../utils/errorclass/DuplicateError");
+const { NotFoundError } = require("../utils/errorclass/NotFoundError");
 
 module.exports.getUsers = (req, res) => {
   User.find({})
@@ -60,13 +60,11 @@ module.exports.createUser = (req, res) => {
           User.create({ name, avatar, email, password: hashedPassword })
         )
         .then((created) =>
-          res
-            .status(201)
-            .send({
-              name: created.name,
-              avatar: created.avatar,
-              email: created.email,
-            })
+          res.status(201).send({
+            name: created.name,
+            avatar: created.avatar,
+            email: created.email,
+          })
         )
         .catch((err) => {
           console.error(err); // Log the error server-side
