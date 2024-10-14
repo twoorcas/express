@@ -121,7 +121,7 @@ module.exports.getCurrentUser = (req, res) => {
   User.findById(id)
     .then((user) => {
       if (user) {
-        return res.send({ message: user });
+        return res.send({ user });
       }
       return Promise.reject(new NotFoundError("User Not Found"));
     })
