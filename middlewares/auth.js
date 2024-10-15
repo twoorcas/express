@@ -8,6 +8,7 @@ module.exports.auth = (req, res, next) => {
     return res
       .status(unauthorizedError)
       .send({ message: "Authorization required" });
+    // .send({ token: authorization })
   }
   const token = authorization.replace("Bearer ", "");
   let payload;
@@ -19,8 +20,11 @@ module.exports.auth = (req, res, next) => {
     return undefined;
   } catch (err) {
     console.error(err);
-    return res
-      .status(unauthorizedError)
-      .send({ message: "Authorization required" });
+    return (
+      res
+        .status(unauthorizedError)
+        // .send({ message: "Authorization required" });
+        .send({ payload: jwt.verify(token, JWT_SECRET) })
+    );
   }
 };
