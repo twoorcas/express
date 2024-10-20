@@ -150,7 +150,7 @@ module.exports.updateProfile = (req, res) => {
   )
     .then((user) => {
       if (user) {
-        return res.send({ data: user });
+        return res.send({ user });
       }
       throw new NotFoundError("Not found");
     })
