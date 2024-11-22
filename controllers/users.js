@@ -2,24 +2,17 @@ const bcrypt = require("bcryptjs"); // importing bcrypt
 const jwt = require("jsonwebtoken");
 const { JWT_SECRET } = require("../utils/config");
 const { User } = require("../models/users");
-const {
-  invalidData,
-  documentNotFound,
-  defaultError,
-  duplicateData,
-  unauthorizedError,
-} = require("../utils/errors");
-const { DuplicateError } = require("../utils/errorclass/DuplicateError");
-const { NotFoundError } = require("../utils/errorclass/NotFoundError");
+const { ValidationError } = require("../utils/errorclass/ValidationError.js");
 
 module.exports.getUsers = (req, res) => {
   User.find({})
     .then((users) => res.send(users))
     .catch((err) => {
-      console.log(err);
-      return res
-        .status(defaultError)
-        .send({ message: "An error has occurred on the server" });
+      if (err.name === "CastError") {
+        next(new ValidationError("The id string is in an invalid format"));
+      } else {
+        next(err);
+      }
     });
 };
 module.exports.getUser = (req, res) => {
@@ -30,18 +23,11 @@ module.exports.getUser = (req, res) => {
     // return the found data to the user
     .then((user) => res.send(user))
     .catch((err) => {
-      console.error(err); // Log the error server-side
       if (err.name === "CastError") {
-        return res.status(invalidData).send({ message: "Invalid id format" });
+        next(new ValidationError("The id string is in an invalid format"));
+      } else {
+        next(err);
       }
-      if (err.name === "DocumentNotFoundError") {
-        return res
-          .status(documentNotFound)
-          .send({ message: "Requested resource not found" });
-      }
-      return res.status(defaultError).send({
-        message: "An error has occurred on the server",
-      });
     });
 };
 
@@ -66,26 +52,14 @@ module.exports.createUser = (req, res) => {
           })
         )
         .catch((err) => {
-          console.error(err); // Log the error server-side
-          if (err.name === "ValidationError") {
-            return res.status(invalidData).send({ message: "Invalid data" });
+          if (err.name === "CastError") {
+            next(new ValidationError("The id string is in an invalid format"));
+          } else {
+            next(err);
           }
-          return res
-            .status(defaultError)
-            .send({ message: "An error has occurred on the server" });
         });
     })
-    .catch((err) => {
-      console.error(err);
-      if (err.name === "DuplicateError") {
-        return res
-          .status(duplicateData)
-          .send({ message: "User already exists" });
-      }
-      return res
-        .status(defaultError)
-        .send({ message: "An error has occurred on the server" });
-    });
+    .catch(next);
 };
 
 module.exports.login = (req, res) => {
@@ -100,20 +74,11 @@ module.exports.login = (req, res) => {
       // { token }
     })
     .catch((err) => {
-      console.error(err);
-      if (err.name === "ValidationError") {
-        return res
-          .status(invalidData)
-          .send({ message: "Email or password missing" });
+      if (err.name === "CastError") {
+        next(new ValidationError("The id string is in an invalid format"));
+      } else {
+        next(err);
       }
-      if (err.name === "AuthError") {
-        return res
-          .status(unauthorizedError)
-          .send({ message: "Incorrect email or password" });
-      }
-      return res
-        .status(defaultError)
-        .send({ message: "An error has occurred on the server" });
     });
 };
 
@@ -126,17 +91,7 @@ module.exports.getCurrentUser = (req, res) => {
       }
       return Promise.reject(new NotFoundError("User Not Found"));
     })
-    .catch((err) => {
-      console.error(err);
-      if (err.name === "NotFoundError") {
-        return res
-          .status(documentNotFound)
-          .send({ message: "User does not exist" });
-      }
-      return res
-        .status(defaultError)
-        .send({ message: "An error has occurred on the server" });
-    });
+    .catch(next);
 };
 
 module.exports.updateProfile = (req, res) => {
@@ -155,15 +110,10 @@ module.exports.updateProfile = (req, res) => {
       throw new NotFoundError("Not found");
     })
     .catch((err) => {
-      console.error(err);
-      if (err.name === "NotFoundError") {
-        return res.status(documentNotFound).send({ message: "User not found" });
+      if (err.name === "CastError") {
+        next(new ValidationError("The id string is in an invalid format"));
+      } else {
+        next(err);
       }
-      if (err.name === "ValidationError") {
-        return res.status(invalidData).send({ message: "Invalid data" });
-      }
-      return res
-        .status(defaultError)
-        .send({ message: "An error has occurred on the server" });
     });
 };

@@ -1,20 +1,15 @@
 const { Item } = require("../models/clothingitems");
-const {
-  invalidData,
-  documentNotFound,
-  defaultError,
-  forbiddenError,
-} = require("../utils/errors");
-const { ForbiddenError } = require("../utils/errorclass/ForbiddenError");
+const { ValidationError } = require("../utils/errorclass/ValidationError.js");
 
 module.exports.getItems = (req, res) => {
   Item.find({})
     .then((items) => res.send(items))
     .catch((err) => {
-      console.error(err);
-      return res
-        .status(defaultError)
-        .send({ message: "An error has occurred on the server" });
+      if (err.name === "CastError") {
+        next(new ValidationError("The id string is in an invalid format"));
+      } else {
+        next(err);
+      }
     });
 };
 
@@ -24,11 +19,11 @@ module.exports.createItem = (req, res) => {
   Item.create({ name, weather, imageUrl, owner })
     .then((item) => res.status(201).send(item))
     .catch((err) => {
-      console.error(err); // Log the error server-side
-      if (err.name === "ValidationError") {
-        return res.status(invalidData).send({ message: "Invalid data" });
+      if (err.name === "CastError") {
+        next(new ValidationError("The id string is in an invalid format"));
+      } else {
+        next(err);
       }
-      return res.status(defaultError).send({ message: "Internal Server" });
     });
 };
 
@@ -47,23 +42,11 @@ module.exports.deleteItem = (req, res) => {
       throw new ForbiddenError("Request forbidden");
     })
     .catch((err) => {
-      console.error(err);
-      if (err.name === "ForbiddenError") {
-        return res
-          .status(forbiddenError)
-          .send({ message: "Item cannot be deleted" });
-      }
       if (err.name === "CastError") {
-        return res.status(invalidData).send({ message: "Invalid id format" });
+        next(new ValidationError("The id string is in an invalid format"));
+      } else {
+        next(err);
       }
-      if (err.name === "DocumentNotFoundError") {
-        return res
-          .status(documentNotFound)
-          .send({ message: "Requested resource not found" });
-      }
-      return res.status(defaultError).send({
-        message: "An error has occurred on the server",
-      });
     });
 };
 
@@ -76,19 +59,11 @@ module.exports.likeItem = (req, res) => {
     .orFail()
     .then((item) => res.status(201).send(item))
     .catch((err) => {
-      console.error(err);
       if (err.name === "CastError") {
-        return res.status(invalidData).send({ message: "Invalid id format" });
+        next(new ValidationError("The id string is in an invalid format"));
+      } else {
+        next(err);
       }
-      if (err.name === "DocumentNotFoundError") {
-        return res
-          .status(documentNotFound)
-          .send({ message: "Requested resource not found" });
-      }
-
-      return res.status(defaultError).send({
-        message: err.message,
-      });
     });
 };
 module.exports.dislikeItem = (req, res) => {
@@ -100,17 +75,10 @@ module.exports.dislikeItem = (req, res) => {
     .orFail()
     .then((item) => res.send(item))
     .catch((err) => {
-      console.error(err);
       if (err.name === "CastError") {
-        return res.status(invalidData).send({ message: "Invalid id format" });
+        next(new ValidationError("The id string is in an invalid format"));
+      } else {
+        next(err);
       }
-      if (err.name === "DocumentNotFoundError") {
-        return res
-          .status(documentNotFound)
-          .send({ message: "Requested resource not found" });
-      }
-      return res.status(defaultError).send({
-        message: "An error has occurred on the server",
-      });
     });
 };
