@@ -21,6 +21,10 @@ mongoose
 // Middleware to parse JSON bodies
 app.use(express.json());
 app.use(cors());
+app.use((req, res, next) => {
+  console.log(`${req.method} ${req.path}`);
+  next();
+});
 app.use(requestLogger);
 app.use("/", indexRouter);
 app.use(errorLogger);
