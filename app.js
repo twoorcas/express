@@ -2,8 +2,8 @@ require("dotenv").config();
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
-const indexRouter = require("./routes/index");
 const { errors } = require("celebrate");
+const indexRouter = require("./routes/index");
 const { errorHandler } = require("./middlewares/error-handler");
 const { requestLogger, errorLogger } = require("./middlewares/logger");
 
@@ -28,7 +28,7 @@ app.get("/crash-test", () => {
     throw new Error("Server will crash now");
   }, 0);
 });
-//remove crash-test code after passing the review.
+// remove crash-test code after passing the review.
 app.use("/", indexRouter);
 app.use(errorLogger);
 app.use(errors());

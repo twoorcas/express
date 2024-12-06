@@ -2,9 +2,9 @@ const bcrypt = require("bcryptjs"); // importing bcrypt
 const jwt = require("jsonwebtoken");
 const { JWT_SECRET } = require("../utils/config");
 const { User } = require("../models/users");
-const { ValidationError } = require("../utils/errorclass/ValidationError.js");
-const { DuplicateError } = require("../utils/errorclass/DuplicateError.js");
-const { NotFoundError } = require("../utils/errorclass/NotFoundError.js");
+const { ValidationError } = require("../utils/errorclass/ValidationError");
+const { DuplicateError } = require("../utils/errorclass/DuplicateError");
+const { NotFoundError } = require("../utils/errorclass/NotFoundError");
 
 module.exports.getUsers = (req, res, next) => {
   User.find({})

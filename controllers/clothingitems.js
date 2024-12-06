@@ -1,5 +1,6 @@
 const { Item } = require("../models/clothingitems");
-const { ValidationError } = require("../utils/errorclass/ValidationError.js");
+const { ValidationError } = require("../utils/errorclass/ValidationError");
+const { ForbiddenError } = require("../utils/errorclass/ForbiddenError");
 
 module.exports.getItems = (req, res, next) => {
   Item.find({})

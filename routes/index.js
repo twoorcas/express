@@ -2,7 +2,6 @@ const indexRouter = require("express").Router(); // creating a router
 const userRouter = require("./users");
 const itemRouter = require("./clothingitems");
 const { login, createUser } = require("../controllers/users");
-const { celebrate, Joi } = require("celebrate");
 
 indexRouter.use("/users", userRouter);
 indexRouter.use("/items", itemRouter);

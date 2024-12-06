@@ -14,8 +14,9 @@ module.exports.auth = (req, res, next) => {
     payload = jwt.verify(token, JWT_SECRET);
     req.user = payload; // assigning payload to the request object
     next();
-    return undefined;
+    // return undefined;
   } catch (err) {
     next(new AuthError("Authorization failed"));
   }
+  return undefined;
 };
