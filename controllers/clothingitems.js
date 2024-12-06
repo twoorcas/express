@@ -13,7 +13,7 @@ module.exports.getItems = (req, res, next) => {
     });
 };
 
-module.exports.createItem = (req, res) => {
+module.exports.createItem = (req, res, next) => {
   const { name, weather, imageUrl } = req.body;
   const owner = req.user._id;
   Item.create({ name, weather, imageUrl, owner })
@@ -27,7 +27,7 @@ module.exports.createItem = (req, res) => {
     });
 };
 
-module.exports.deleteItem = (req, res) => {
+module.exports.deleteItem = (req, res, next) => {
   const user = req.user._id;
   Item.findById(req.params.itemId)
     .populate("owner")
@@ -50,7 +50,7 @@ module.exports.deleteItem = (req, res) => {
     });
 };
 
-module.exports.likeItem = (req, res) => {
+module.exports.likeItem = (req, res, next) => {
   Item.findByIdAndUpdate(
     req.params.itemId,
     { $addToSet: { likes: req.user._id } }, // add _id to the array if it's not there yet
@@ -66,7 +66,7 @@ module.exports.likeItem = (req, res) => {
       }
     });
 };
-module.exports.dislikeItem = (req, res) => {
+module.exports.dislikeItem = (req, res, next) => {
   Item.findByIdAndUpdate(
     req.params.itemId,
     { $pull: { likes: req.user._id } }, // remove _id from the array

@@ -6,7 +6,7 @@ const { ValidationError } = require("../utils/errorclass/ValidationError.js");
 const { DuplicateError } = require("../utils/errorclass/DuplicateError.js");
 const { NotFoundError } = require("../utils/errorclass/NotFoundError.js");
 
-module.exports.getUsers = (req, res) => {
+module.exports.getUsers = (req, res, next) => {
   User.find({})
     .then((users) => res.send(users))
     .catch((err) => {
@@ -17,7 +17,7 @@ module.exports.getUsers = (req, res) => {
       }
     });
 };
-module.exports.getUser = (req, res) => {
+module.exports.getUser = (req, res, next) => {
   const { id } = req.params;
   User.findById(id)
     // throw error if id format valid but id not found
@@ -84,7 +84,7 @@ module.exports.login = (req, res, next) => {
     });
 };
 
-module.exports.getCurrentUser = (req, res) => {
+module.exports.getCurrentUser = (req, res, next) => {
   const id = req.user._id;
   User.findById(id)
     .then((user) => {
@@ -96,7 +96,7 @@ module.exports.getCurrentUser = (req, res) => {
     .catch(next);
 };
 
-module.exports.updateProfile = (req, res) => {
+module.exports.updateProfile = (req, res, next) => {
   const { _id } = req.user;
   const { name, avatar } = req.body;
 
