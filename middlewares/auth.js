@@ -16,6 +16,6 @@ module.exports.auth = (req, res, next) => {
     next();
     return undefined;
   } catch (err) {
-    throw new AuthError("Authorization failed");
+    next(new AuthError("Authorization failed"));
   }
 };
