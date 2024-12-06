@@ -3,6 +3,8 @@ const jwt = require("jsonwebtoken");
 const { JWT_SECRET } = require("../utils/config");
 const { User } = require("../models/users");
 const { ValidationError } = require("../utils/errorclass/ValidationError.js");
+const { DuplicateError } = require("../utils/errorclass/DuplicateError.js");
+const { NotFoundError } = require("../utils/errorclass/NotFoundError.js");
 
 module.exports.getUsers = (req, res) => {
   User.find({})
@@ -39,7 +41,7 @@ module.exports.createUser = (req, res) => {
         throw new DuplicateError("duplicate emails");
       }
       // If user doesn't exist, hash the password and create the user
-      bcrypt
+      return bcrypt
         .hash(password, 10)
         .then((hashedPassword) =>
           User.create({ name, avatar, email, password: hashedPassword })
