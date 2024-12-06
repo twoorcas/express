@@ -1,5 +1,3 @@
-const crypto = require("crypto");
-
 const { JWT_SECRET = "super-strong-secret" } = process.env;
 
 module.exports = {
