@@ -1,8 +1,10 @@
 require("dotenv").config();
 const express = require("express");
+const helmet = require("helmet");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const { errors } = require("celebrate");
+const limiter = require("./middlewares/rate-limit");
 const indexRouter = require("./routes/index");
 const { errorHandler } = require("./middlewares/error-handler");
 const { requestLogger, errorLogger } = require("./middlewares/logger");
@@ -20,6 +22,8 @@ mongoose
   .catch((err) => console.error("Failed to connect to MongoDB", err));
 
 // Middleware to parse JSON bodies
+app.use(helmet());
+app.use(limiter());
 app.use(express.json());
 app.use(cors());
 app.use(requestLogger);

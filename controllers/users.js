@@ -6,33 +6,6 @@ const { ValidationError } = require("../utils/errorclass/ValidationError");
 const { DuplicateError } = require("../utils/errorclass/DuplicateError");
 const { NotFoundError } = require("../utils/errorclass/NotFoundError");
 
-module.exports.getUsers = (req, res, next) => {
-  User.find({})
-    .then((users) => res.send(users))
-    .catch((err) => {
-      if (err.name === "CastError") {
-        next(new ValidationError("The id string is in an invalid format"));
-      } else {
-        next(err);
-      }
-    });
-};
-module.exports.getUser = (req, res, next) => {
-  const { id } = req.params;
-  User.findById(id)
-    // throw error if id format valid but id not found
-    .orFail()
-    // return the found data to the user
-    .then((user) => res.send(user))
-    .catch((err) => {
-      if (err.name === "CastError") {
-        next(new ValidationError("The id string is in an invalid format"));
-      } else {
-        next(err);
-      }
-    });
-};
-
 module.exports.createUser = (req, res, next) => {
   const { name, avatar, email, password } = req.body; // get the name and description of the user
   User.findOne({ email })
@@ -54,7 +27,7 @@ module.exports.createUser = (req, res, next) => {
           })
         )
         .catch((err) => {
-          if (err.name === "CastError") {
+          if (err.name === "ValidationError") {
             next(new ValidationError("The id string is in an invalid format"));
           } else {
             next(err);
@@ -72,11 +45,11 @@ module.exports.login = (req, res, next) => {
         JWT_SECRET,
         { expiresIn: "7d" } // this token will expire in 7d
       );
-      return res.send({ token, user });
+      return res.send({ token });
       // { token }
     })
     .catch((err) => {
-      if (err.name === "CastError") {
+      if (err.name === "ValidationError") {
         next(new ValidationError("The id string is in an invalid format"));
       } else {
         next(err);
@@ -112,7 +85,7 @@ module.exports.updateProfile = (req, res, next) => {
       throw new NotFoundError("Not found");
     })
     .catch((err) => {
-      if (err.name === "CastError") {
+      if (err.name === "ValidationError") {
         next(new ValidationError("The id string is in an invalid format"));
       } else {
         next(err);

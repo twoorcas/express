@@ -1,17 +1,12 @@
 const { Item } = require("../models/clothingitems");
 const { ValidationError } = require("../utils/errorclass/ValidationError");
 const { ForbiddenError } = require("../utils/errorclass/ForbiddenError");
+const { NotFoundError } = require("../utils/errorclass/NotFoundError");
 
 module.exports.getItems = (req, res, next) => {
   Item.find({})
     .then((items) => res.send(items))
-    .catch((err) => {
-      if (err.name === "CastError") {
-        next(new ValidationError("The id string is in an invalid format"));
-      } else {
-        next(err);
-      }
-    });
+    .catch(next);
 };
 
 module.exports.createItem = (req, res, next) => {
@@ -20,7 +15,7 @@ module.exports.createItem = (req, res, next) => {
   Item.create({ name, weather, imageUrl, owner })
     .then((item) => res.status(201).send(item))
     .catch((err) => {
-      if (err.name === "CastError") {
+      if (err.name === "ValidationError") {
         next(new ValidationError("The id string is in an invalid format"));
       } else {
         next(err);
@@ -43,6 +38,9 @@ module.exports.deleteItem = (req, res, next) => {
       throw new ForbiddenError("Request forbidden");
     })
     .catch((err) => {
+      if (err.name === "DocumentNotFoundError") {
+        next(new NotFoundError("The id doesn't exist"));
+      }
       if (err.name === "CastError") {
         next(new ValidationError("The id string is in an invalid format"));
       } else {
@@ -60,6 +58,9 @@ module.exports.likeItem = (req, res, next) => {
     .orFail()
     .then((item) => res.status(201).send(item))
     .catch((err) => {
+      if (err.name === "DocumentNotFoundError") {
+        next(new NotFoundError("The id doesn't exist"));
+      }
       if (err.name === "CastError") {
         next(new ValidationError("The id string is in an invalid format"));
       } else {
@@ -76,6 +77,9 @@ module.exports.dislikeItem = (req, res, next) => {
     .orFail()
     .then((item) => res.send(item))
     .catch((err) => {
+      if (err.name === "DocumentNotFoundError") {
+        next(new NotFoundError("The id doesn't exist"));
+      }
       if (err.name === "CastError") {
         next(new ValidationError("The id string is in an invalid format"));
       } else {
