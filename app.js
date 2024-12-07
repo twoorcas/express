@@ -23,7 +23,7 @@ mongoose
 
 // Middleware to parse JSON bodies
 app.use(helmet());
-app.use(limiter());
+app.use(limiter);
 app.use(express.json());
 app.use(cors());
 app.use(requestLogger);
