@@ -68,7 +68,7 @@ module.exports.validateAuthentication = celebrate({
 });
 module.exports.validateItemId = celebrate({
   params: Joi.object().keys({
-    itemId: Joi.string().required.hex().length(24).messages({
+    itemId: Joi.string().required().hex().length(24).messages({
       "string.empty": 'The "id" must not be empty',
       "string.hex": 'The "id" must be a valid id',
       "string.length": 'The "id" must be 24 characters',
