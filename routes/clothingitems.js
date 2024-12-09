@@ -13,8 +13,8 @@ const {
 } = require("../middlewares/validation");
 
 itemRouter.get("/", getItems);
-itemRouter.post("/", validateItemBody, auth, createItem);
-itemRouter.delete("/:itemId", validateItemId, auth, deleteItem);
-itemRouter.put("/:itemId/likes", validateItemId, auth, likeItem);
-itemRouter.delete("/:itemId/likes", validateItemId, auth, dislikeItem);
+itemRouter.post("/", auth, validateItemBody, createItem);
+itemRouter.delete("/:itemId", auth, validateItemId, deleteItem);
+itemRouter.put("/:itemId/likes", auth, validateItemId, likeItem);
+itemRouter.delete("/:itemId/likes", auth, validateItemId, dislikeItem);
 module.exports = itemRouter;
