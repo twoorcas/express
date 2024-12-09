@@ -8,8 +8,14 @@ The back-end project is focused on creating a server for the WTWR application. H
 
 `npm run dev` — to launch the server with the hot reload feature
 
-## Domain Name:
+## Domain Name
 
 wtwrbyjulie.twilightparadox.com
+
 www.wtwrbyjulie.twilightparadox.com
+
 api.wtwrbyjulie.twilightparadox.com
+
+## Demo
+
+<img width="1470" alt="Screenshot 2024-12-09 at 2 58 57 PM" src="https://github.com/user-attachments/assets/9b9864b1-472f-4e99-8e2c-ba07b0c7bcff">
